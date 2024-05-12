@@ -38,7 +38,11 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "bb_app",
+    "rest_framework",
 ]
+
+AUTH_USER_MODEL = "bb_app.CustomUser"  # Update this if you have a custom user model
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
