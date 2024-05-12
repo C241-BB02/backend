@@ -1,12 +1,14 @@
 from django.db import models
-
-# Create your models here.
 from django.contrib.auth.models import AbstractUser
 
 
+class UserRole(models.TextChoices):
+    ADMIN = "ADMIN", "Admin"
+    SELLER = "SELLER", "Seller"
+    CUSTOMER = "CUSTOMER", "Customer"
+
+
 class CustomUser(AbstractUser):
-    # Add any additional fields you want
-    pass
-
-
-# Remember to set AUTH_USER_MODEL in your settings.py to 'bb_app.CustomUser'
+    role = models.CharField(
+        max_length=10, choices=UserRole.choices, default=UserRole.CUSTOMER
+    )
