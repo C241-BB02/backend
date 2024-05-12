@@ -39,10 +39,16 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "bb_app",
     "rest_framework",
+    "rest_framework_simplejwt.token_blacklist",
 ]
 
-AUTH_USER_MODEL = "bb_app.CustomUser"  # Update this if you have a custom user model
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+}
 
+AUTH_USER_MODEL = "bb_app.CustomUser"  # Update this if you have a custom user model
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
