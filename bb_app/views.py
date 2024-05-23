@@ -1,17 +1,27 @@
 from django.shortcuts import render
 from rest_framework import generics
-from .serializers import User, UserRegistrationSerializer
+from .serializers import (
+    CustomTokenObtainPairSerializer,
+    User,
+    UserRegistrationSerializer,
+)
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import ProductSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers import CustomTokenObtainPairSerializer
 
 
 class UserRegistrationView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserRegistrationSerializer
+
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
 
 
 class LogoutView(APIView):
