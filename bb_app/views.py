@@ -13,6 +13,10 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import ProductSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import CustomTokenObtainPairSerializer
+from rest_framework.generics import ListAPIView, UpdateAPIView
+from .models import Product
+from rest_framework.generics import RetrieveAPIView
+from rest_framework.generics import DestroyAPIView
 
 
 class UserRegistrationView(generics.CreateAPIView):
@@ -44,3 +48,65 @@ class CreateProductView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ProductListView(ListAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+
+class ProductBySellerListView(ListAPIView):
+    serializer_class = ProductSerializer
+
+    def get_queryset(self):
+        user_id = self.kwargs["user_id"]
+        return Product.objects.filter(user_id=user_id)
+
+
+class ProductByStatusListView(ListAPIView):
+    serializer_class = ProductSerializer
+
+    def get_queryset(self):
+        status = self.kwargs["status"]
+        return Product.objects.filter(status__iexact=status)
+
+
+class ProductUpdateView(UpdateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    lookup_field = "code"
+
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        serializer = self.get_serializer(self.get_object(), data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+
+class ProductDetailView(RetrieveAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    lookup_field = "code"
+
+
+class ProductDeleteView(DestroyAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    lookup_field = "code"
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serialized_data = self.get_serializer(
+            instance
+        ).data  # Serialize data before deletion
+        self.perform_destroy(instance)
+        return Response(
+            {"message": "Product successfully deleted.", "product": serialized_data},
+            status=status.HTTP_200_OK,
+        )
+
+    def perform_destroy(self, instance):
+        instance.delete()
