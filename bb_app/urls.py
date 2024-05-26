@@ -3,6 +3,7 @@ from .views import (
     CreateProductView,
     CustomTokenObtainPairView,
     LogoutView,
+    PhotoCreateView,
     ProductBySellerListView,
     ProductByStatusListView,
     ProductDeleteView,
@@ -39,4 +40,6 @@ urlpatterns = [
         ProductDeleteView.as_view(),
         name="delete-product",
     ),
+    # path("photos/upload/", PhotoUploadView.as_view(), name="photo-upload"),
+    path("photos/create/", PhotoCreateView.as_view(), name="create-photo"),
 ]

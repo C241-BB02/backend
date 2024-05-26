@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .models import UserRole
+from .models import Photo, UserRole
 from .models import Product
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.settings import api_settings
@@ -51,3 +51,9 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         # Add extra responses here
         data["role"] = self.user.role
         return data
+
+
+class PhotoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Photo
+        fields = ["id", "product", "url", "status"]
