@@ -121,16 +121,16 @@ class ProductDeleteView(DestroyAPIView):
         instance.delete()
 
 
-# class PhotoUploadView(APIView):
-#     parser_classes = [MultiPartParser, FormParser]
+class PhotoUploadView(APIView):
+    parser_classes = [MultiPartParser, FormParser]
 
-#     def post(self, request, *args, **kwargs):
-#         serializer = PhotoSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         else:
-#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def post(self, request, *args, **kwargs):
+        serializer = PhotoSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PhotoCreateView(CreateAPIView):

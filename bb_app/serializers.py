@@ -56,4 +56,4 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 class PhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Photo
-        fields = ["id", "product", "url", "status"]
+        fields = ["id", "product", "image", "status"]

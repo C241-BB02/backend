@@ -33,7 +33,8 @@ class Photo(models.Model):
     product = models.ForeignKey(
         "Product", on_delete=models.CASCADE, related_name="photos"
     )
-    url = models.URLField(max_length=200)
+    image = models.ImageField(upload_to="photos/", null=True, blank=True)
+
     status = models.CharField(max_length=100)
 
     def __str__(self):
