@@ -35,10 +35,10 @@ COPY . /docker-app/
 EXPOSE 8000
 
 # Collect static for better visualization
-RUN python manage.py collectstatic
+RUN python manage.py collectstatic --no-input
 
 # Run DB migration
-RUN python manage.py migrate
+RUN python manage.py migrate --no-input
 
 # Run Gunicorn
 CMD ["gunicorn", "app.nani.wsgi", "--bind", "0.0.0.0:8000"]
