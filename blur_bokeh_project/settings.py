@@ -94,7 +94,7 @@ WSGI_APPLICATION = "blur_bokeh_project.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-ENVIRONMENT = config("ENVIRONMENT", default="local")
+ENVIRONMENT = config("ENVIRONMENT", default="production")
 SECRET_KEY = config("SECRET_KEY")
 if ENVIRONMENT == "local":
     DATABASES = {
