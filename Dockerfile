@@ -34,6 +34,9 @@ COPY . /docker-app/
 # Expose port 8000
 EXPOSE 8000
 
+# Create the directory for static files
+RUN mkdir -p /docker-app/staticfiles
+
 # Collect static for better visualization
 RUN python manage.py collectstatic --no-input
 
