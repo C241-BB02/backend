@@ -23,6 +23,8 @@ from rest_framework import status
 from .models import Photo
 from .serializers import PhotoSerializer
 from rest_framework.generics import CreateAPIView
+import requests
+from django.http import JsonResponse
 
 
 class UserRegistrationView(generics.CreateAPIView):
@@ -48,19 +50,68 @@ class LogoutView(APIView):
 
 
 class CreateProductView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, *args, **kwargs):
-        serializer = ProductSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # check role
+        if request.user.role != "SELLER":
+            return Response(
+                {"message": "You must be a seller to create a product."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
+        # check length
+        files = request.FILES.getlist("photos")
+        if len(files) > 5:
+            return Response(
+                {"message": "You can only upload 3-5 images."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        files_payload = [("files", file) for file in files]
 
-# TODO create photo API -> response returns id
+        # predict
+        response = requests.post(
+            "https://capstone-ml-app-mo5jvyk6cq-as.a.run.app/predict",
+            files=files_payload,
+        )
+        predictions = response.json()
+        non_blur_photos = [
+            prediction
+            for prediction in predictions
+            if prediction["prediction"] != "Blur"
+        ]
+        number_of_passes = len(non_blur_photos)
+
+        # check pass
+        if number_of_passes >= 3:
+            request.data["status"] = "ACCEPTED"
+            request.data["revenue"] = 0
+            serializer = ProductSerializer(data=request.data)
+            if serializer.is_valid():
+                # save data
+                product = serializer.save(user=request.user)
+                for prediction in predictions:
+                    # create photo object
+                    file = list(
+                        filter(lambda file: file.name == prediction["filename"], files)
+                    )[0]
+                    photo = Photo.objects.create(
+                        product=product,
+                        status=prediction["prediction"],
+                    )
+                    with file.open("rb") as f:
+                        photo.image = f
+                        photo.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"message": f"You only uploaded {number_of_passes} non-blurred photos."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
 
 class ProductListView(ListAPIView):
-    queryset = Product.objects.all()
+    queryset = Product.objects.prefetch_related("photos").all()
     serializer_class = ProductSerializer
 
 
@@ -73,6 +124,7 @@ class ProductBySellerListView(ListAPIView):
 
 
 class ProductByStatusListView(ListAPIView):
+    queryset = Product.objects.prefetch_related("photos").all()
     serializer_class = ProductSerializer
 
     def get_queryset(self):
@@ -81,7 +133,7 @@ class ProductByStatusListView(ListAPIView):
 
 
 class ProductUpdateView(UpdateAPIView):
-    queryset = Product.objects.all()
+    queryset = Product.objects.prefetch_related("photos").all()
     serializer_class = ProductSerializer
     lookup_field = "code"
 
@@ -96,13 +148,13 @@ class ProductUpdateView(UpdateAPIView):
 
 
 class ProductDetailView(RetrieveAPIView):
-    queryset = Product.objects.all()
+    queryset = Product.objects.prefetch_related("photos").all()
     serializer_class = ProductSerializer
     lookup_field = "code"
 
 
 class ProductDeleteView(DestroyAPIView):
-    queryset = Product.objects.all()
+    queryset = Product.objects.prefetch_related("photos").all()
     serializer_class = ProductSerializer
     lookup_field = "code"
 
@@ -131,8 +183,3 @@ class PhotoUploadView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class PhotoCreateView(CreateAPIView):
-    queryset = Photo.objects.all()
-    serializer_class = PhotoSerializer
