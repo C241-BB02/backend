@@ -33,8 +33,11 @@ class ProductSerializer(serializers.ModelSerializer):
 class UserRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["username", "email", "password", "role"]
-        extra_kwargs = {"password": {"write_only": True}}
+        fields = ["id", "username", "email", "password", "role"]
+        extra_kwargs = {
+            "password": {"write_only": True},
+            "id": {"read_only": True},
+        }
 
     def create(self, validated_data):
         role = validated_data.get("role", UserRole.CUSTOMER)
@@ -78,9 +81,11 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         data = super().validate(attrs)
         refresh = self.get_token(self.user)
 
-        data["refresh"] = str(refresh)
         data["access"] = str(refresh.access_token)
 
         # Add extra responses here
         data["role"] = self.user.role
+        data["id"] = self.user.id
+        data["username"] = self.user.username
+        data["email"] = self.user.email
         return data
