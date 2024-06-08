@@ -30,6 +30,12 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class ProductUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        exclude = ["code", "user"]
+
+
 class UserRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
