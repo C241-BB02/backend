@@ -62,7 +62,7 @@ jobs:
             --build-arg DATABASE_HOST=$DATABASE_HOST \
             --build-arg DATABASE_PORT=$DATABASE_PORT \
             --build-arg SECRET_KEY=$SECRET_KEY \
-            --build-arg GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS \
+            --build-arg GOOGLE_APPLICATION_CREDENTIALS='${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' \
             --build-arg ENVIRONMENT=$ENVIRONMENT \
             . --no-cache
 
