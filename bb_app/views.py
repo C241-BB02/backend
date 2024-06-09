@@ -88,29 +88,27 @@ class CreateProductView(APIView):
         # check pass
         if number_of_passes >= 3:
             request.data["status"] = "ACCEPTED"
-            request.data["revenue"] = 0
-            serializer = ProductSerializer(data=request.data)
-            if serializer.is_valid():
-                # save data
-                product = serializer.save(user=request.user)
-                for prediction in predictions:
-                    # create photo object
-                    file = list(
-                        filter(lambda file: file.name == prediction["filename"], files)
-                    )[0]
-                    photo = Photo.objects.create(
-                        product=product,
-                        status=prediction["prediction"],
-                    )
-                    with file.open("rb") as f:
-                        photo.image = f
-                        photo.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        return Response(
-            {"message": f"You only uploaded {number_of_passes} non-blurred photos."},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        else:
+            request.data["status"] = "BANNED"
+        request.data["revenue"] = 0
+        serializer = ProductSerializer(data=request.data)
+        if serializer.is_valid():
+            # save data
+            product = serializer.save(user=request.user)
+            for prediction in predictions:
+                # create photo object
+                file = list(
+                    filter(lambda file: file.name == prediction["filename"], files)
+                )[0]
+                photo = Photo.objects.create(
+                    product=product,
+                    status=prediction["prediction"],
+                )
+                with file.open("rb") as f:
+                    photo.image = f
+                    photo.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ProductUpdateView(APIView):
@@ -164,14 +162,10 @@ class ProductUpdateView(APIView):
 
             # check pass
             if number_of_passes < 3:
-                return Response(
-                    {
-                        "message": f"You only uploaded {number_of_passes} non-blurred photos."
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+                request.data["status"] = "BANNED"
+            else:
+                request.data["status"] = "ACCEPTED"
 
-            request.data["status"] = "ACCEPTED"
             serializer = ProductUpdateSerializer(
                 product, data=request.data, partial=partial
             )
