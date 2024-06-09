@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from datetime import timedelta
 from pathlib import Path
 from decouple import config
+from google.oauth2 import service_account
+import json
 import os
 
 
@@ -122,12 +124,10 @@ else:
 # Default file storage
 DEFAULT_FILE_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
 
-from google.oauth2 import service_account
-
 GS_BUCKET_NAME="c241-bb02"
 
-GS_CREDENTIALS = service_account.Credentials.from_service_account_file(
-    config("GOOGLE_APPLICATION_CREDENTIALS")
+GS_CREDENTIALS = service_account.Credentials.from_service_account_info(
+    json.loads(config('GOOGLE_APPLICATION_CREDENTIALS'))
 )
 
 # Password validation
