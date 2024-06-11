@@ -3,7 +3,6 @@ from .views import (
     CreateProductView,
     CustomTokenObtainPairView,
     LogoutView,
-    PhotoCreateView,
     PhotoUploadView,
     ProductBySellerListView,
     ProductByStatusListView,
@@ -20,7 +19,7 @@ urlpatterns = [
     path("create-product/", CreateProductView.as_view(), name="create-product"),
     path("token/", CustomTokenObtainPairView.as_view(), name="token_obtain_pair"),
     path(
-        "products/seller/<uuid:user_id>/",
+        "products/seller/<int:user_id>/",
         ProductBySellerListView.as_view(),
         name="products-by-seller",
     ),
@@ -42,5 +41,4 @@ urlpatterns = [
         name="delete-product",
     ),
     path("photos/upload/", PhotoUploadView.as_view(), name="photo-upload"),
-    # path("photos/create/", PhotoCreateView.as_view(), name="create-photo"),
 ]

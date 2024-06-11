@@ -10,6 +10,8 @@ class UserRole(models.TextChoices):
 
 
 class CustomUser(AbstractUser):
+    email = models.EmailField(unique=True)
+    username = models.CharField(max_length=150, unique=True)
     role = models.CharField(
         max_length=10, choices=UserRole.choices, default=UserRole.CUSTOMER
     )
@@ -22,7 +24,9 @@ class Product(models.Model):
     status = models.CharField(max_length=100)
     stock = models.IntegerField()
     revenue = models.FloatField()
-    user_id = models.UUIDField()
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    price = models.BigIntegerField(default="10000")
+    description = models.TextField(default="This is the description field.")
 
     def __str__(self):
         return self.name
