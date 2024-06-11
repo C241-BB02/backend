@@ -14,6 +14,9 @@ env:
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
   ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
   GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+  CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
+  CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
+  CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
 
 jobs:
   build:
@@ -62,6 +65,9 @@ jobs:
             --build-arg DATABASE_HOST=$DATABASE_HOST \
             --build-arg DATABASE_PORT=$DATABASE_PORT \
             --build-arg SECRET_KEY=$SECRET_KEY \
+            --build-arg CLOUDINARY_CLOUD_NAME=$CLOUDINARY_CLOUD_NAME \
+            --build-arg CLOUDINARY_API_KEY=$CLOUDINARY_API_KEY \
+            --build-arg CLOUDINARY_API_SECRET=$CLOUDINARY_API_SECRET \
             --build-arg GOOGLE_APPLICATION_CREDENTIALS='${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' \
             --build-arg ENVIRONMENT=$ENVIRONMENT \
             . --no-cache

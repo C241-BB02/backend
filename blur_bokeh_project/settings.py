@@ -13,8 +13,6 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from datetime import timedelta
 from pathlib import Path
 from decouple import config
-from google.oauth2 import service_account
-import json
 import os
 
 
@@ -34,7 +32,7 @@ SECRET_KEY = config(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['equal-walleye-funky.ngrok-free.app', 'localhost']
 
 # Adjust Settings for File Uploads
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
@@ -53,6 +51,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'cloudinary_storage',
+    'cloudinary',
     "bb_app",
     "rest_framework",
     "rest_framework_simplejwt.token_blacklist",
@@ -123,13 +123,13 @@ else:
     }
 
 # Default file storage
-DEFAULT_FILE_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': config("CLOUDINARY_CLOUD_NAME"),
+    'API_KEY': config("CLOUDINARY_API_KEY"),
+    'API_SECRET': config("CLOUDINARY_API_SECRET")
+}
 
-GS_BUCKET_NAME = "c241-bb02"
-
-GS_CREDENTIALS = service_account.Credentials.from_service_account_info(
-    json.loads(config("GOOGLE_APPLICATION_CREDENTIALS"))
-)
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
