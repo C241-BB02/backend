@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     "bb_app",
     "rest_framework",
     "rest_framework_simplejwt.token_blacklist",
+    "storages",
 ]
 
 REST_FRAMEWORK = {
@@ -124,10 +125,10 @@ else:
 # Default file storage
 DEFAULT_FILE_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
 
-GS_BUCKET_NAME="c241-bb02"
+GS_BUCKET_NAME = "c241-bb02"
 
 GS_CREDENTIALS = service_account.Credentials.from_service_account_info(
-    json.loads(config('GOOGLE_APPLICATION_CREDENTIALS'))
+    json.loads(config("GOOGLE_APPLICATION_CREDENTIALS"))
 )
 
 # Password validation

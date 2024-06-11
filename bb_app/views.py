@@ -201,8 +201,12 @@ class ProductUpdateView(APIView):
 
 
 class ProductListView(ListAPIView):
-    queryset = Product.objects.prefetch_related("photos").all()
     serializer_class = ProductSerializer
+
+    def get_queryset(self):
+        return Product.objects.prefetch_related(
+            Prefetch("photos", queryset=Photo.objects.all(), to_attr="filtered_photos")
+        )
 
 
 class ProductBySellerListView(ListAPIView):
@@ -210,7 +214,9 @@ class ProductBySellerListView(ListAPIView):
 
     def get_queryset(self):
         user_id = self.kwargs["user_id"]
-        return Product.objects.filter(user_id=user_id)
+        return Product.objects.filter(user_id=user_id).prefetch_related(
+            Prefetch("photos", queryset=Photo.objects.all(), to_attr="filtered_photos")
+        )
 
 
 class ProductByStatusListView(ListAPIView):
