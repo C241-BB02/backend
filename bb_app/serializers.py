@@ -22,7 +22,7 @@ class UserProductSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    photos = PhotoSerializer(many=True, read_only=True)
+    photos = PhotoSerializer(many=True, read_only=True, source="filtered_photos")
     user = UserProductSerializer(required=False)
 
     class Meta:

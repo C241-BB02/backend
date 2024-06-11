@@ -26,6 +26,7 @@ from .serializers import PhotoSerializer
 from rest_framework.generics import CreateAPIView
 import requests
 from django.http import JsonResponse
+from django.db.models import Prefetch
 
 
 class UserRegistrationView(generics.CreateAPIView):
@@ -213,12 +214,17 @@ class ProductBySellerListView(ListAPIView):
 
 
 class ProductByStatusListView(ListAPIView):
-    queryset = Product.objects.prefetch_related("photos").all()
     serializer_class = ProductSerializer
 
     def get_queryset(self):
         status = self.kwargs["status"]
-        return Product.objects.filter(status__iexact=status)
+        return Product.objects.filter(status__iexact=status).prefetch_related(
+            Prefetch(
+                "photos",
+                queryset=Photo.objects.filter(status__in=["Normal", "Bokeh"]),
+                to_attr="filtered_photos",
+            )
+        )
 
 
 class ProductDetailView(RetrieveAPIView):
