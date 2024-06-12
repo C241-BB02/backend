@@ -21,3 +21,4 @@ whitenoise==6.2.0
 wrapt==1.14.1
 Pillow==9.5.0
 django-storages[google]==1.14.3
+django-cloudinary-storage==0.3.0
