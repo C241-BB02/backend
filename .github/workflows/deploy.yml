@@ -104,5 +104,6 @@ jobs:
             docker rm ${{ secrets.DOCKER_CONTAINER_NAME }} || true
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE_NAME }}:latest
             docker run -dt --restart unless-stopped -p 80:8000 --name ${{ secrets.DOCKER_CONTAINER_NAME }} ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_IMAGE_NAME }}:latest
+            docker image prune -f
             sudo systemctl stop nginx
             sudo systemctl start nginx
