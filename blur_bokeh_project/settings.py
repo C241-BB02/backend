@@ -32,7 +32,8 @@ SECRET_KEY = config(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['equal-walleye-funky.ngrok-free.app', 'localhost']
+# TODO: Rewrite allowed hosts
+ALLOWED_HOSTS = ['*']
 
 # Adjust Settings for File Uploads
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
