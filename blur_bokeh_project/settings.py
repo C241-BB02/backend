@@ -35,6 +35,9 @@ DEBUG = True
 # TODO: Rewrite allowed hosts
 ALLOWED_HOSTS = ['*']
 
+#TODO: FOR DEV purposes only
+CORS_ALLOW_ALL_ORIGINS = True
+
 # Adjust Settings for File Uploads
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
@@ -54,6 +57,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     'cloudinary_storage',
     'cloudinary',
+    'corsheaders',
     "bb_app",
     "rest_framework",
     "rest_framework_simplejwt.token_blacklist",
@@ -72,6 +76,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
