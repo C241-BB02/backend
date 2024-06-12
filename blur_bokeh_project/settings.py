@@ -38,6 +38,11 @@ ALLOWED_HOSTS = ['*']
 #TODO: FOR DEV purposes only
 CORS_ALLOW_ALL_ORIGINS = True
 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
 # Adjust Settings for File Uploads
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
