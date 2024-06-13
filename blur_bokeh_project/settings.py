@@ -35,6 +35,8 @@ DEBUG = True
 # TODO: Rewrite allowed hosts
 ALLOWED_HOSTS = ['*']
 
+CORS_ALLOW_CREDENTIALS = True
+
 #TODO: FOR DEV purposes only
 CORS_ALLOWED_ORIGINS = [
     'https://blurredbasket.vercel.app',
@@ -81,9 +83,9 @@ AUTH_USER_MODEL = "bb_app.CustomUser"  # Update this if you have a custom user m
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    'corsheaders.middleware.CorsMiddleware',
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
