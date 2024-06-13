@@ -37,7 +37,7 @@ ALLOWED_HOSTS = ['*']
 
 #TODO: FOR DEV purposes only
 CORS_ALLOWED_ORIGINS = [
-    'https://blurredbasket.vercel.app/',
+    'https://blurredbasket.vercel.app',
 ]
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
