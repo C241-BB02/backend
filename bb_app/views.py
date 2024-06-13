@@ -96,6 +96,7 @@ class CreateProductView(APIView):
         if serializer.is_valid():
             # save data
             product = serializer.save(user=request.user)
+            photos = []
             for prediction in predictions:
                 # create photo object
                 file = list(
@@ -108,7 +109,15 @@ class CreateProductView(APIView):
                 with file.open("rb") as f:
                     photo.image = f
                     photo.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+                photos.append(photo)
+
+            # Set filtered_photos attribute
+            product.filtered_photos = photos
+
+            # Include photos in the response
+            response_data = ProductSerializer(product).data
+
+            return Response(response_data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -173,6 +182,7 @@ class ProductUpdateView(APIView):
             if serializer.is_valid():
                 product = serializer.save()
                 Photo.objects.filter(product=product).delete()  # delete old photos
+                photos = []
                 for prediction in predictions:
                     # create new photo object
                     file = list(
@@ -185,9 +195,15 @@ class ProductUpdateView(APIView):
                     with file.open("rb") as f:
                         photo.image = f
                         photo.save()
-                return Response(
-                    ProductSerializer(product).data, status=status.HTTP_200_OK
-                )
+                    photos.append(photo)
+
+                # Set filtered_photos attribute
+                product.filtered_photos = photos
+
+                # Include photos in the response
+                response_data = ProductSerializer(product).data
+
+                return Response(response_data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         # If no photos are uploaded, just update the product details
@@ -234,7 +250,9 @@ class ProductByStatusListView(ListAPIView):
 
 
 class ProductDetailView(RetrieveAPIView):
-    queryset = Product.objects.prefetch_related("photos").all()
+    queryset = Product.objects.prefetch_related(
+        Prefetch("photos", queryset=Photo.objects.all(), to_attr="filtered_photos")
+    )
     serializer_class = ProductSerializer
     lookup_field = "code"
 
